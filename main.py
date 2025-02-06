@@ -1,15 +1,16 @@
 import os
 import requests
 import pandas as pd
+from datetime import datetime
 from dotenv import load_dotenv
 # Your YouTube API Key
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
 CHANNEL_ID = os.getenv("CHANNEL_ID")  # Replace with your channel ID
-COMMENTS_LIMIT = 5
+COMMENTS_LIMIT = 10
 
 def get_channel_videos(api_key, channel_id):
-    """Fetch all video IDs from a YouTube channel."""
+    # Extracts video ids of a channel
     url = "https://www.googleapis.com/youtube/v3/search"
     params = {
         "part": "id",
@@ -39,7 +40,7 @@ def get_channel_videos(api_key, channel_id):
     return video_ids
 
 def get_video_comments(api_key, video_id, max_results=COMMENTS_LIMIT):
-    """Fetch comments from a specific video."""
+    # Fetch comments from a video
     url = "https://www.googleapis.com/youtube/v3/commentThreads"
     params = {
         "part": "snippet",
@@ -55,18 +56,21 @@ def get_video_comments(api_key, video_id, max_results=COMMENTS_LIMIT):
     comments_list = []
     for comment in comments_data:
         snippet = comment["snippet"]["topLevelComment"]["snippet"]
+        cleaned_date = snippet["publishedAt"][:-1].replace("T"," ")
+        date_object = datetime.strptime(cleaned_date, "%Y-%m-%d %H:%M:%S")
+        print(date_object)
         comments_list.append({
             "Video ID": video_id,
             "Author": snippet["authorDisplayName"],
             "Comment": snippet["textDisplay"],
             "Likes": snippet["likeCount"],
-            "Published At": snippet["publishedAt"]
+            "Published At": date_object
         })
 
     return comments_list
 
 def scrape_channel_comments(api_key, channel_id):
-    """Fetch comments from all videos of a channel."""
+    # Fetch comments from a channel
     video_ids = get_channel_videos(api_key, channel_id)
     all_comments = []
 
