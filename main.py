@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
 CHANNEL_ID = os.getenv("CHANNEL_ID")  # Replace with your channel ID
-COMMENTS_LIMIT = 5  # Max comments per request (100 is API limit)
+COMMENTS_LIMIT = 5
 
 def get_channel_videos(api_key, channel_id):
     """Fetch all video IDs from a YouTube channel."""
