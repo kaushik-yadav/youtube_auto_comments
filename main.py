@@ -113,17 +113,28 @@ def store_comments(comments_list):
     # committing all the changes saved in our session
     session.commit() 
 
+def get_latest_published_time():
+    latest_time = session.query(YoutubeComments).order_by(YoutubeComments.published_at.desc()).first()
+    if latest_time:
+        return latest_time.published_at
+    return None
+
 def main():
     # Fetch comments from a channel
     video_ids = get_channel_video_ids(API_KEY,CHANNEL_ID)
 
     print(f"Fetching comments from {len(video_ids)} videos...")
-
+    latest_time = get_latest_published_time()
     for video_id in video_ids:
         try:
             comments = get_video_comments(API_KEY, video_id)
             if comments and comments[0]["comment"]:
-                store_comments(comments)
+                ## filtering the comments based on latest published time (takes all comments if no records i.e if latest_time = None)
+                filtered_comments = [comment for comment in comments if not latest_time or comment["published_at"] > latest_time]
+                
+                ## storing the filtered comments in db 
+                if filtered_comments:
+                    store_comments(filtered_comments)
             #all_comments.extend(comments)
         except Exception as e:
             print(f"Error fetching comments for video https://www.youtube.com/watch?v={video_id}: {e}")
