@@ -2,3 +2,5 @@ venv/
 experiment.ipynb
 .env
 youtube_channel_comments.csv
+requirements.txt
+youtube_comments.db
