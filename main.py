@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import declarative_base,sessionmaker
+from auth import authenticate_youtube
 
 # Your YouTube API Key
 load_dotenv()
@@ -121,6 +122,7 @@ def get_latest_published_time():
 
 def main():
     # Fetch comments from a channel
+
     video_ids = get_channel_video_ids(API_KEY,CHANNEL_ID)
 
     print(f"Fetching comments from {len(video_ids)} videos...")
